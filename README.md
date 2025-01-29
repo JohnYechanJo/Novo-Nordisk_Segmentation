@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ## Contributors
 
-[![GitHub contributors](https://img.shields.io/github/contributors/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors-anon/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
 
 <table>
   <tr>
