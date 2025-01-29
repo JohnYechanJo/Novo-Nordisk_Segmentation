@@ -22,7 +22,7 @@
 
 ## Acknowledgements
 
-This project was part of MIT xPro 2025 AI+X Bootcamp, January to February, 2025, under the guidance of [Alex Benjamin](https://www.linkedin.com/in/abenjamin1992/).
+This project was part of Winter 2025 MIT AI+X On-Campus Experience, January to February, 2025, under the guidance of [Alex Benjamin](https://www.linkedin.com/in/abenjamin1992/).
 
 ## License
 
