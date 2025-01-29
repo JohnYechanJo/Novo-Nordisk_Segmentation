@@ -1,7 +1,3 @@
-<div align="center">
-  <h3>A Citywide Object Archive Using Nerfstudio</h3>
-  <p>Reconstructing objects across the city of Boston using Nerfstudio.</p>
-
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Contributors
