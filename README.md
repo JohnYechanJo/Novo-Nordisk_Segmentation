@@ -21,7 +21,7 @@ This project was part of Winter 2025 MIT AI+X On-Campus Experience, January to F
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./MIT_License) file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Contributing
 
