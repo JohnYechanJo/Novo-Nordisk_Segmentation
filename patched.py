@@ -50,8 +50,8 @@ transform = transforms.Compose([
 train_dataset = RetinaDataset(TRAIN_IMAGE_PATH, TRAIN_MASK_PATH, transform=transform)
 test_dataset = RetinaDataset(TEST_IMAGE_PATH, TEST_MASK_PATH, transform=transform)
 
-train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=8, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=16, shuffle=False)
 
 import torch
 import torch.nn as nn
@@ -106,7 +106,7 @@ class PatchMaskedAutoEncoder(nn.Module):
         super().__init__()
         self.encoder = encoder
         self.decoder = decoder
-        
+
         self.patch_size = patch_size
         self.image_size = image_size
         self.mask_ratio = mask_ratio
@@ -163,15 +163,15 @@ class ResidualBlock(nn.Module):
     """
     def __init__(self, in_channels, out_channels, stride=1, downsample=None):
         super(ResidualBlock, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels, 
+        self.conv1 = nn.Conv2d(in_channels, out_channels,
                                kernel_size=3, stride=stride, padding=1, bias=False)
         self.bn1 = nn.BatchNorm2d(out_channels)
         self.relu = nn.ReLU(inplace=True)
-        
-        self.conv2 = nn.Conv2d(out_channels, out_channels, 
+
+        self.conv2 = nn.Conv2d(out_channels, out_channels,
                                kernel_size=3, stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(out_channels)
-        
+
         self.downsample = downsample
 
     def forward(self, x):
@@ -205,14 +205,14 @@ class ModernEncoder(nn.Module):
     def __init__(self, layers=[2, 2, 2, 2], base_channels=64, in_channels=3):
         super(ModernEncoder, self).__init__()
         self.in_channels = base_channels
-        
+
         # Initial convolution and pooling (similar to ResNet stem)
-        self.conv1 = nn.Conv2d(in_channels, base_channels, 
+        self.conv1 = nn.Conv2d(in_channels, base_channels,
                                kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm2d(base_channels)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
-        
+
         # Residual layers
         self.layer1 = self._make_layer(base_channels,   layers[0], stride=1)  # 1/4 scale
         self.layer2 = self._make_layer(base_channels*2, layers[1], stride=2)  # 1/8 scale
@@ -221,13 +221,13 @@ class ModernEncoder(nn.Module):
 
     def _make_layer(self, out_channels, blocks, stride=1):
         """
-        Create a stack of residual blocks, including a 'downsample' 
+        Create a stack of residual blocks, including a 'downsample'
         layer if channel dimension or stride is changed.
         """
         downsample = None
         if stride != 1 or self.in_channels != out_channels:
             downsample = nn.Sequential(
-                nn.Conv2d(self.in_channels, out_channels, 
+                nn.Conv2d(self.in_channels, out_channels,
                           kernel_size=1, stride=stride, bias=False),
                 nn.BatchNorm2d(out_channels),
             )
@@ -236,11 +236,11 @@ class ModernEncoder(nn.Module):
         # First block in this layer
         layers.append(ResidualBlock(self.in_channels, out_channels, stride, downsample))
         self.in_channels = out_channels
-        
+
         # Remaining blocks
         for _ in range(1, blocks):
             layers.append(ResidualBlock(out_channels, out_channels))
-            
+
         return nn.Sequential(*layers)
 
     def forward(self, x):
@@ -264,7 +264,7 @@ class ModernEncoder(nn.Module):
 class ModernDecoder(nn.Module):
     """
     A decoder that uses transpose convolutions (or could use upsampling + conv).
-    Mirrors the encoder in reverse, but you can also add skip connections 
+    Mirrors the encoder in reverse, but you can also add skip connections
     from the encoder if desired (like U-Net).
     """
     def __init__(self, base_channels=64, out_channels=3):
@@ -272,7 +272,7 @@ class ModernDecoder(nn.Module):
 
         # The decoder channels should match the encoder's last layer, i.e. base_channels*8
         # if you used the default layers=[2,2,2,2]. Adjust accordingly.
-        
+
         self.up1 = nn.ConvTranspose2d(base_channels*8, base_channels*4, kernel_size=2, stride=2)
         self.res1 = ResidualBlock(base_channels*4, base_channels*4)
 
@@ -282,7 +282,7 @@ class ModernDecoder(nn.Module):
         self.up3 = nn.ConvTranspose2d(base_channels*2, base_channels, kernel_size=2, stride=2)
         self.res3 = ResidualBlock(base_channels, base_channels)
 
-        # One more up if you want to get back to the original scale 
+        # One more up if you want to get back to the original scale
         # (depending on the input image resolution).
         self.up4 = nn.ConvTranspose2d(base_channels, base_channels // 2, kernel_size=2, stride=2)
         self.res4 = ResidualBlock(base_channels // 2, base_channels // 2)
@@ -327,7 +327,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=10e-4)
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+from torch.optim.lr_scheduler import CosineAnnealingLR
+scheduler = CosineAnnealingLR(optimizer, T_max=1000, eta_min=1e-6) 
 
 num_epochs = 1000
 for epoch in trange(num_epochs):
@@ -346,6 +348,7 @@ for epoch in trange(num_epochs):
 
         epoch_loss += loss.item()
 
+    scheduler.step()
     print(f"Epoch {epoch+1}/{num_epochs} | Loss: {epoch_loss/len(train_loader):.4f}")
 
 
