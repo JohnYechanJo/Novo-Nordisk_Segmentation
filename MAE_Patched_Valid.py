@@ -369,6 +369,9 @@ for epoch in trange(num_epochs):
     validation_losses.append(val_epoch_loss)
     print(f"Validation Loss: {val_epoch_loss:.4f}")
 
+# Save model
+torch.save(model.state_dict(), 'model.pt')
+
 # Save validation losses
 torch.save(validation_losses, 'validation_losses.pt')
 
