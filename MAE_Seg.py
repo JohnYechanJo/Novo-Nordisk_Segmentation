@@ -277,8 +277,10 @@ class FocalTverskyLoss(nn.Module):
         self.gamma = gamma
 
     def forward(self, y_pred, y_true):
-        y_pred = y_pred.view(-1)
-        y_true = y_true.view(-1)
+        # y_pred = y_pred.view(-1)
+        # y_true = y_true.view(-1)
+        y_pred = y_pred.reshape(-1)
+        y_true = y_true.reshape(-1)
 
         # True positives, false positives, false negatives
         TP = (y_pred * y_true).sum()
@@ -301,7 +303,11 @@ for epoch in trange(num_epochs):
     epoch_loss = 0.0
     for images, seg in train_loader:  # from your RetinaDataset
         images = images.to(device)
+        print(images.shape)
         seg = seg.to(device)
+        print(seg.shape)
+        # Expand seg to three channels
+        seg = seg.expand(-1, 3, -1, -1)
 
         predicted_seg = model(images)
 
@@ -323,6 +329,7 @@ for epoch in trange(num_epochs):
         for val_images, val_seg in valid_loader:
             val_images = val_images.to(device)
             val_seg = val_seg.to(device)
+            val_seg = val_seg.expand(-1, 3, -1, -1)
             val_out = model(val_images)
             val_loss = criterion(val_out, val_seg)
             val_epoch_loss += val_loss.item()
@@ -332,8 +339,6 @@ for epoch in trange(num_epochs):
 # Save validation losses
 torch.save(validation_losses, 'validation_losses.pt')
 torch.save(training_losses, 'training_losses.pt')
-
-# 绘制 validation_losses 折线图
 plt.figure(figsize=(10, 5))
 plt.plot(validation_losses, label='Validation Loss')
 plt.xlabel('Epoch')
@@ -342,8 +347,6 @@ plt.title('Validation Loss Over Epochs')
 plt.legend()
 plt.savefig('validation_losses.png')
 plt.show()
-
-# 绘制 training_losses 折线图
 plt.figure(figsize=(10, 5))
 plt.plot(training_losses, label='Training Loss')
 plt.xlabel('Epoch')
