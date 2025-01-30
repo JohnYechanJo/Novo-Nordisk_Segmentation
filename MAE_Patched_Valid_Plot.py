@@ -131,11 +131,10 @@ class PatchMaskedAutoEncoder(nn.Module):
         patches = patchify(x, self.patch_size)  # shape: (N, num_patches, C, pH, pW)
         N, num_patches, C, pH, pW = patches.shape
 
-        # 2) Randomly pick which patches to mask
-        num_mask = int(self.mask_ratio * num_patches)
-        rand_indices = torch.rand(N, num_patches, device=x.device).argsort(dim=1)
-        mask_indices = rand_indices[:, :num_mask]      # first num_mask are "masked"
-        keep_indices = rand_indices[:, num_mask:]      # rest are "visible"
+        # 2) Each patch has a mask_ratio chance of being zeroed out
+        mask_indices = torch.rand(N, num_patches) < self.mask_ratio
+        mask_indices = mask_indices[:, :, None, None, None]  # for broadcasting
+        mask_indices = mask_indices.expand(N, num_patches, C, pH, pW)
 
         # We'll copy patches so we can zero out the masked ones
         corrupted_patches = patches.clone()
