@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ## Contributors
 
-[![GitHub contributors](https://img.shields.io/github/contributors/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
 
 <table>
   <tr>
@@ -21,7 +21,15 @@ This project was part of Winter 2025 MIT AI+X On-Campus Experience, January to F
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./MIT_License) file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+## Purpose 
+
+## Pipeline
+
+### Masked Auto-Encoder
+
+
 
 ## Contributing
 
