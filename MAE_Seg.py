@@ -267,7 +267,30 @@ model.load_state_dict(torch.load('model.pt'))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-criterion = nn.MSELoss()
+# criterion = nn.MSELoss()
+# Loss: Focal Tversky Loss
+class FocalTverskyLoss(nn.Module):
+    def __init__(self, alpha=0.7, beta=0.3, gamma=1.3):
+        super(FocalTverskyLoss, self).__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.gamma = gamma
+
+    def forward(self, y_pred, y_true):
+        y_pred = y_pred.view(-1)
+        y_true = y_true.view(-1)
+
+        # True positives, false positives, false negatives
+        TP = (y_pred * y_true).sum()
+        FP = ((1 - y_true) * y_pred).sum()
+        FN = (y_true * (1 - y_pred)).sum()
+
+        tversky = (TP + 1e-10) / (TP + self.alpha*FP + self.beta*FN + 1e-10)
+        focal = (1 - tversky)**self.gamma
+
+        return focal
+    
+criterion = FocalTverskyLoss()
 optimizer = optim.Adam(model.parameters(), lr=10e-4)
 
 validation_losses = []
