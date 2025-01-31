@@ -32,14 +32,6 @@ This project was part of Winter 2025 MIT AI+X On-Campus Experience, January to F
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
-## Purpose 
-
-## Pipeline
-
-### Masked Auto-Encoder
-
-
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
