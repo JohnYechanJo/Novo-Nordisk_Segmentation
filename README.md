@@ -12,7 +12,6 @@
 ## Contributors
 
 [![GitHub Contributors](https://img.shields.io/github/contributors-anon/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
-[![GitHub Contributors Graph](https://contributors-img.web.app/image?repo=JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
 
 <table>
   <tr>
@@ -22,6 +21,8 @@
     </tr>
 </table>
 
+### 🔥 Contribution Activity Graph  
+![GitHub Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=JohnYechanJo&repo=Novo-Nordisk_MIT&theme=react-dark)
 
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=4&height=80&section=footer&fontSize=80)
