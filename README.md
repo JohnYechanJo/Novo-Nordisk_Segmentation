@@ -21,8 +21,8 @@
     </tr>
 </table>
 
-### 🔥 Contribution Activity Graph  
-![GitHub Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=JohnYechanJo&repo=Novo-Nordisk_MIT&theme=react-dark)
+### 📊 Contribution Summary  
+![GitHub Stats](https://github-readme-stats.vercel.app/api?username=JohnYechanJo&show_icons=true&theme=react)  
 
 
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=4&height=80&section=footer&fontSize=80)
