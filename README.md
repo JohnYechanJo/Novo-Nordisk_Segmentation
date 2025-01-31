@@ -20,11 +20,6 @@
     <td align="center"><a href="https://github.com/Athjon"><img src="https://avatars.githubusercontent.com/u/136285291?v=4" width="100px;" alt=""/><br /><sub><b>Wenbo An</b></sub></a><br /></td>
     </tr>
 </table>
-
-### 📊 Contribution Summary  
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=JohnYechanJo&show_icons=true&theme=react)  
-
-
 ![footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=4&height=80&section=footer&fontSize=80)
 </div>
 
