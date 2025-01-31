@@ -34,7 +34,7 @@ class RetinaDataset(Dataset):
         mask = (mask > 0).float()  # 0 or 1
         return image, mask
 
-# 데이터 경로 설정
+# ??? ?? ??
 extract_path = "./dataset_L"
 TRAIN_IMAGE_PATH = os.path.join(extract_path, "retina/train")
 TRAIN_MASK_PATH = os.path.join(extract_path, "mask/train")
@@ -44,13 +44,13 @@ VALID_IMAGE_PATH = os.path.join(extract_path, "retina/validation")
 VALID_MASK_PATH = os.path.join(extract_path, "mask/validation")
 
 
-# 데이터 변환
+# ??? ??
 transform = transforms.Compose([
     transforms.Resize((512, 512)),
     transforms.ToTensor(),
 ])
 
-# 데이터 로더 준비
+# ??? ?? ??
 train_dataset = RetinaDataset(TRAIN_IMAGE_PATH, TRAIN_MASK_PATH, transform=transform)
 test_dataset = RetinaDataset(TEST_IMAGE_PATH, TEST_MASK_PATH, transform=transform)
 valid_dataset = RetinaDataset(VALID_IMAGE_PATH, VALID_MASK_PATH, transform=transform)
@@ -270,7 +270,7 @@ model.to(device)
 # criterion = nn.MSELoss()
 # Loss: Focal Tversky Loss
 class FocalTverskyLoss(nn.Module):
-    def __init__(self, alpha=0.7, beta=0.3, gamma=0.75):
+    def __init__(self, alpha=0.3, beta=0.7, gamma=0.75):
         super(FocalTverskyLoss, self).__init__()
         self.alpha = alpha
         self.beta = beta
@@ -292,11 +292,37 @@ class FocalTverskyLoss(nn.Module):
 
         return focal
     
+# Loss: Focal Loss
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=0.25, gamma=2):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+
+    def forward(self, y_pred, y_true):
+        # y_pred = y_pred.view(-1)
+        # y_true = y_true.view(-1)
+        y_pred = y_pred.reshape(-1)
+        y_true = y_true.reshape(-1)
+
+        # BCE loss
+        bce = nn.BCELoss()(y_pred, y_true)
+
+        # Focal loss
+        p_t = (y_true * y_pred) + ((1 - y_true) * (1 - y_pred))
+        alpha = self.alpha * y_true + (1 - self.alpha) * (1 - y_true)
+        loss = alpha * (1 - p_t)**self.gamma * bce
+
+        return loss.mean()
+    
 criterion = FocalTverskyLoss()
+# criterion = FocalLoss()
 optimizer = optim.Adam(model.parameters(), lr=10e-4)
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.6, patience=5)
 
 validation_losses = []
 training_losses = []
+lrs = []
 num_epochs = 250
 for epoch in trange(num_epochs):
     model.train()
@@ -336,6 +362,10 @@ for epoch in trange(num_epochs):
     validation_losses.append(val_epoch_loss/len(valid_loader))
     print(f"Validation Loss: {val_epoch_loss/len(valid_loader):.4f}")
 
+    # Step with the scheduler
+    scheduler.step(val_epoch_loss)
+    lrs.append(optimizer.param_groups[0]['lr'])
+
 # Save validation losses
 torch.save(validation_losses, 'validation_losses.pt')
 torch.save(training_losses, 'training_losses.pt')
@@ -355,6 +385,14 @@ plt.title('Training Loss Over Epochs')
 plt.legend()
 plt.savefig('training_losses.png')
 plt.show()
+# Plot lr
+plt.figure(figsize=(10, 5))
+plt.plot(lrs, label='Learning Rate')
+plt.xlabel('Epoch')
+plt.ylabel('Learning Rate')
+plt.title('Learning Rate Over Epochs')
+plt.legend()
+plt.savefig('learning_rate.png')
 
 import matplotlib.pyplot as plt
 
