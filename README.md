@@ -6,8 +6,9 @@
   <h1>Masked Autoencoders for Retina Blood Vessel Segmentation</h1>
   
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub last commit](https://img.shields.io/github/last-commit/JohnYechanJo/NVIDIA_MIT)](https://github.com/JohnYechanJo/NVIDIA_MIT/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/JohnYechanJo/NVIDIA_MIT)](https://github.com/JohnYechanJo/NVIDIA_MIT/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/issues)
+<br>
 ## Contributors
 
 [![GitHub Contributors](https://img.shields.io/github/contributors-anon/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
