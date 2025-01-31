@@ -1,6 +1,14 @@
 <div align="center">
+<img src="./MAE for Retina Blood Vessel Segmentation.png">
 
+<br>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=4&height=80">
+  <h1>Masked Autoencoders for Retina Blood Vessel Segmentation</h1>
+  
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub last commit](https://img.shields.io/github/last-commit/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/issues)
+<br>
 ## Contributors
 
 [![GitHub Contributors](https://img.shields.io/github/contributors-anon/JohnYechanJo/Novo-Nordisk_MIT)](https://github.com/JohnYechanJo/Novo-Nordisk_MIT/graphs/contributors)
@@ -13,6 +21,7 @@
     </tr>
 </table>
 
+![footer](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=4&height=80&section=footer&fontSize=80)
 </div>
 
 ## Acknowledgements
@@ -22,14 +31,6 @@ This project was part of Winter 2025 MIT AI+X On-Campus Experience, January to F
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
-## Purpose 
-
-## Pipeline
-
-### Masked Auto-Encoder
-
-
 
 ## Contributing
 
