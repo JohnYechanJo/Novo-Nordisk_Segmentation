@@ -55,9 +55,9 @@ train_dataset = RetinaDataset(TRAIN_IMAGE_PATH, TRAIN_MASK_PATH, transform=trans
 test_dataset = RetinaDataset(TEST_IMAGE_PATH, TEST_MASK_PATH, transform=transform)
 valid_dataset = RetinaDataset(VALID_IMAGE_PATH, VALID_MASK_PATH, transform=transform)
 
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
-valid_loader = DataLoader(valid_dataset, batch_size=32, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+valid_loader = DataLoader(valid_dataset, batch_size=64, shuffle=False)
 
 import torch
 import torch.nn as nn
@@ -315,8 +315,51 @@ class FocalLoss(nn.Module):
 
         return loss.mean()
     
+class DiceLoss(nn.Module):
+    def __init__(self, smooth=1):
+        super(DiceLoss, self).__init__()
+        self.smooth = smooth
+
+    def forward(self, y_pred, y_true):
+        # y_pred = y_pred.view(-1)
+        # y_true = y_true.view(-1)
+        y_pred = y_pred.reshape(-1)
+        y_true = y_true.reshape(-1)
+
+        intersection = (y_pred * y_true).sum()
+        dice = (2. * intersection + self.smooth) / (y_pred.sum() + y_true.sum() + self.smooth)
+
+        return 1 - dice
+    
+class DiceBCELoss(nn.Module):
+    def __init__(self, alpha=0.5, gamma=0.75):
+        super(DiceBCELoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.bce = nn.BCELoss()
+
+    def forward(self, y_pred, y_true):
+        # y_pred = y_pred.view(-1)
+        # y_true = y_true.view(-1)
+        y_pred = y_pred.reshape(-1)
+        y_true = y_true.reshape(-1)
+
+        # Dice loss
+        intersection = (y_pred * y_true).sum()
+        dice = 1 - (2. * intersection + 1) / (y_pred.sum() + y_true.sum() + 1)
+
+        # BCE loss
+        bce = self.bce(y_pred, y_true)
+
+        # Combined loss
+        loss = self.alpha * bce + (1 - self.alpha) * dice**self.gamma
+
+        return loss
+    
 criterion = FocalTverskyLoss()
 # criterion = FocalLoss()
+# criterion = DiceLoss()
+# criterion = DiceBCELoss()
 optimizer = optim.Adam(model.parameters(), lr=10e-4)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.6, patience=5)
 
@@ -329,9 +372,9 @@ for epoch in trange(num_epochs):
     epoch_loss = 0.0
     for images, seg in train_loader:  # from your RetinaDataset
         images = images.to(device)
-        print(images.shape)
+        # print(images.shape)
         seg = seg.to(device)
-        print(seg.shape)
+        # print(seg.shape)
         # Expand seg to three channels
         seg = seg.expand(-1, 3, -1, -1)
 
@@ -428,3 +471,34 @@ plt.tight_layout()
 # plt.show()
 plt.savefig('wowow.png')
 
+# Run all test images through the model and report metrics such as Jacard Index, Dice Coefficient, etc.
+import numpy as np
+from sklearn.metrics import jaccard_score, f1_score
+
+model.eval()
+all_jaccard = []
+all_f1 = []
+
+for images, seg in test_loader:
+    images = images.to(device)
+    seg = seg.to(device)
+    seg = seg.expand(-1, 3, -1, -1)
+    with torch.no_grad():
+        predicted_seg = model(images)
+    predicted_seg = predicted_seg.cpu().numpy()
+    seg = seg.cpu().numpy()
+    for i in range(len(predicted_seg)):
+        pred = predicted_seg[i].reshape(-1)
+        gt = seg[i].reshape(-1)
+        pred = (pred > 0.5).astype(int)
+        gt = (gt > 0.5).astype(int)
+        jaccard = jaccard_score(gt, pred)
+        f1 = f1_score(gt, pred)
+        all_jaccard.append(jaccard)
+        all_f1.append(f1)
+
+print(f"Mean Jaccard Index: {np.mean(all_jaccard):.4f}")
+print(f"Mean F1 Score: {np.mean(all_f1):.4f}")
+
+# Save model
+torch.save(model.state_dict(), 'model_seg.pt')
